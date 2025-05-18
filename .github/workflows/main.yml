@@ -27,6 +27,9 @@ jobs:
             docker compose build     # Собираем контейнеры
             docker compose up -d     # Запускаем контейнеры
 
+            # Установка зависимостей Laravel
+            docker compose exec -T media-atlas-app composer install --no-dev --optimize-autoloader
+
             # Выполняем artisan-команды внутри контейнера Laravel
             docker compose exec -T media-atlas-app php artisan migrate --force
             docker compose exec -T media-atlas-app php artisan config:cache
