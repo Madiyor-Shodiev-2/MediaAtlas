@@ -1,9 +1,7 @@
-FROM --platform=linux/amd64 php:8.3-fpm
+FROM --platform=linux/amd64 php:8.3-fpm as base
 
-# Установка рабочей директории
-WORKDIR /var/www/html
+WORKDIR /var/www
 
-# Установка системных зависимостей и PHP-расширений
 RUN apt-get update && apt-get install -y \
     libpng-dev \
     libjpeg-dev \
@@ -22,13 +20,7 @@ RUN apt-get update && apt-get install -y \
     && apt-get purge -y --auto-remove \
     && rm -rf /var/lib/apt/lists/*
 
-# Копирование файлов composer и установка зависимостей
-COPY composer.json composer.lock ./
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
-RUN composer install --no-dev --optimize-autoloader --no-interaction
-
-# Копирование остальных файлов проекта
-COPY . .
 
 # Определение UID и GID
 ARG UID=1000
@@ -43,3 +35,11 @@ RUN chown -R www:www /var/www/html/storage /var/www/html/bootstrap/cache
 
 # Переключение на нового пользователя
 USER www
+
+#RUN composer install --optimize-autoloader --no-dev --no-scripts
+
+#RUN php artisan config:cache \
+#    && php artisan route:cache \
+#    && php artisan view:cache
+
+#RUN chown -R www-data:www-data /var/www
