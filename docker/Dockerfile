@@ -20,9 +20,11 @@ RUN apt-get update && apt-get install -y \
     && apt-get purge -y --auto-remove \
     && rm -rf /var/lib/apt/lists/*
 
+COPY composer.json composer.lock /var/www/html/
+
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
-RUN composer install --optimize-autoloader --no-dev --no-scripts
+RUN composer install --no-dev --optimize-autoloader --no-interaction
 
 # Определяем UID и GID
 ARG UID=1000
@@ -36,9 +38,3 @@ RUN groupadd -g $GID www && \
 RUN chown -R www:www /var/www/html/storage /var/www/html/bootstrap/cache
 
 USER www
-
-#RUN php artisan config:cache \
-#    && php artisan route:cache \
-#    && php artisan view:cache
-
-#RUN chown -R www-data:www-data /var/www
