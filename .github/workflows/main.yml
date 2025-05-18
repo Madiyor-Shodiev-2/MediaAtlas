@@ -21,7 +21,7 @@ jobs:
           ssh -o StrictHostKeyChecking=no -i key.pem root@185.191.141.82 << 'EOF'
             echo "✅ Connected to server"
 
-            cd /var/www/Media-Atlas   # Путь до проекта на сервере
+            cd /var/www/MediaAtlas   # Путь до проекта на сервере
             git pull origin main              # Тянем последнюю версию из GitHub
             composer install --no-dev --optimize-autoloader
             php artisan migrate --force
