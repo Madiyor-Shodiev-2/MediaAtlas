@@ -1,7 +1,9 @@
-FROM --platform=linux/amd64 php:8.3-fpm as base
+FROM --platform=linux/amd64 php:8.3-fpm
 
-WORKDIR /var/www
+# Установка рабочей директории
+WORKDIR /var/www/html
 
+# Установка системных зависимостей и PHP-расширений
 RUN apt-get update && apt-get install -y \
     libpng-dev \
     libjpeg-dev \
@@ -20,21 +22,24 @@ RUN apt-get update && apt-get install -y \
     && apt-get purge -y --auto-remove \
     && rm -rf /var/lib/apt/lists/*
 
-COPY composer.json composer.lock /var/www/html/
-
+# Копирование файлов composer и установка зависимостей
+COPY composer.json composer.lock ./
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
-
 RUN composer install --no-dev --optimize-autoloader --no-interaction
 
-# Определяем UID и GID
+# Копирование остальных файлов проекта
+COPY . .
+
+# Определение UID и GID
 ARG UID=1000
 ARG GID=1000
 
-# Создаем группу и пользователя с указанными UID и GID
+# Создание группы и пользователя с указанными UID и GID
 RUN groupadd -g $GID www && \
     useradd -u $UID -g $GID -m www
 
-# Устанавливаем владельца директорий
+# Установка владельца для директорий
 RUN chown -R www:www /var/www/html/storage /var/www/html/bootstrap/cache
 
+# Переключение на нового пользователя
 USER www
