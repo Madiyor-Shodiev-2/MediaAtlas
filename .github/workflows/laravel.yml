@@ -1,21 +1,36 @@
-name: SSH Connection
+name: Auto Deploy via SSH
 
-on: [push]
+on:
+  push:
+    branches:
+      - main  # можно изменить на нужную ветку
 
 jobs:
-  test-ssh:
+  deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Cloning Repository ...
+      - name: Checkout repository
         uses: actions/checkout@v4
-      
-      - name: Set up SSH
+
+      - name: Deploy to remote server via SSH
         run: |
           echo "$SSH_PRIVATE_KEY" > key.pem
           chmod 600 key.pem
-          
-          ssh -o StrictHostKeyChecking=no -i key.pem root@185.191.141.82 "echo 'Connected' && uptime"
+
+          ssh -o StrictHostKeyChecking=no -i key.pem root@185.191.141.82 << 'EOF'
+            echo "✅ Connected to server"
+
+            cd /var/www/Media-Atlas   # Путь до проекта на сервере
+            git pull origin main              # Тянем последнюю версию из GitHub
+            composer install --no-dev --optimize-autoloader
+            php artisan migrate --force
+            php artisan config:cache
+            php artisan route:cache
+            php artisan view:cache
+
+            echo "🚀 Deployment complete"
+          EOF
 
         env:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
