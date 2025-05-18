@@ -3,7 +3,7 @@ name: Auto Deploy via SSH
 on:
   push:
     branches:
-      - main  # можно изменить на нужную ветку
+      - main
 
 jobs:
   deploy:
@@ -21,13 +21,17 @@ jobs:
           ssh -o StrictHostKeyChecking=no -i key.pem root@185.191.141.82 << 'EOF'
             echo "✅ Connected to server"
 
-            cd /var/www/MediaAtlas   # Путь до проекта на сервере
-            git pull origin main              # Тянем последнюю версию из GitHub
-            composer install --no-dev --optimize-autoloader
-            php artisan migrate --force
-            php artisan config:cache
-            php artisan route:cache
-            php artisan view:cache
+            cd /var/www/MediaAtlas   # Путь до проекта
+            git pull origin main     # Обновляем код
+
+            docker compose build     # Собираем контейнеры
+            docker compose up -d     # Запускаем контейнеры
+
+            # Выполняем artisan-команды внутри контейнера Laravel
+            docker compose exec -T media-atlas-app php artisan migrate --force
+            docker compose exec -T media-atlas-app php artisan config:cache
+            docker compose exec -T media-atlas-app php artisan route:cache
+            docker compose exec -T media-atlas-app php artisan view:cache
 
             echo "🚀 Deployment complete"
           EOF
