@@ -22,7 +22,20 @@ RUN apt-get update && apt-get install -y \
 
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
-#RUN composer install --optimize-autoloader --no-dev --no-scripts
+RUN composer install --optimize-autoloader --no-dev --no-scripts
+
+# Определяем UID и GID
+ARG UID=1000
+ARG GID=1000
+
+# Создаем группу и пользователя с указанными UID и GID
+RUN groupadd -g $GID www && \
+    useradd -u $UID -g $GID -m www
+
+# Устанавливаем владельца директорий
+RUN chown -R www:www /var/www/html/storage /var/www/html/bootstrap/cache
+
+USER www
 
 #RUN php artisan config:cache \
 #    && php artisan route:cache \
