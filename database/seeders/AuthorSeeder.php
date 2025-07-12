@@ -1,9 +1,10 @@
 <?php
 
-namespace  Database\Seeders;
+namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use App\Models\Authors;
+
 class AuthorSeeder extends Seeder
 {
     /**
@@ -11,54 +12,51 @@ class AuthorSeeder extends Seeder
      */
     public function run(): void
     {
-        Authors::query()->create([
-            "name" => "Евгение Стрекоза",
-            "url" => "https://litnet.com/ru/mariya-luneva-u244464"
-        ]); //categories:books
+        $authors = collect([
+            [
+                "name" => "Евгение Стрекоза",
+                "url" => "https://litnet.com/ru/mariya-luneva-u244464"
+            ],
+            [
+                'name' => "Enjoykin",
+                'url' => 'https://www.youtube.com/@Enjoykin'
+            ],
+            [
+                'name' => 'RomNero',
+                'url' => 'https://www.youtube.com/@RomNero',
+            ],
+            [
+                'name' => 'Vlad Mishustin',
+                'url' => 'https://www.youtube.com/@fakng-engineer'
+            ],
+            [
+                'name' => 'Hacker School',
+                'url' => 'https://www.youtube.com/@hackers666'
+            ],
+            [
+                'name' => 'Kinoman',
+                'url' => 'https://www.youtube.com/@KinomanTrailers'
+            ],
+            [
+                "name" => "Мария Лунева",
+                "url" => "https://litnet.com/ru/mariya-luneva-u244464"
+            ],
+            [
+                "name" => "Амир Сунаев",
+                "url" => "https://litnet.com/ru/mariya-luneva-u244464"
+            ],
+            [
+                "name" => "Люся Лунева",
+                "url" => "https://litnet.com/ru/mariya-luneva-u244464"
+            ],
+            [
+                "name" => "Федя Лунеев",
+                "url" => "https://litnet.com/ru/mariya-luneva-u244464"
+            ],
+        ]);
 
-        Authors::query()->create([
-            'name' => "Enjoykin",
-            'url' => 'https://www.youtube.com/@Enjoykin'
-        ]); //{musics} categories:video
-
-        Authors::query()->create([
-            'name' => 'RomNero',
-            'url' => 'https://www.youtube.com/@RomNero',
-        ]); // {programming} categories:video
-
-        Authors::query()->create([
-            'name' => 'Vlad Mishustin',
-            'url' => 'https://www.youtube.com/@fakng-engineer'
-        ]); //{programming} categories:video
-
-        Authors::query()->create([
-            'name' => 'Hacker School',
-            'url' => 'https://www.youtube.com/@hackers666'
-        ]); //{hack-programming} categories:video
-
-        Authors::query()->create([
-            'name' => 'Kinoman',
-            'url' => 'https://www.youtube.com/@KinomanTrailers'
-        ]); //{movies trailer} categories:video
-
-        Authors::query()->create([
-            "name" => "Мария Лунева",
-            "url" => "https://litnet.com/ru/mariya-luneva-u244464"
-        ]); //categories:books
-
-        Authors::query()->create([
-            "name" => "Амир Сунаев",
-            "url" => "https://litnet.com/ru/mariya-luneva-u244464"
-        ]); //categories:books
-
-        Authors::query()->create([
-            "name" => "Люся Лунева",
-            "url" => "https://litnet.com/ru/mariya-luneva-u244464"
-        ]); //categories:books
-
-        Authors::query()->create([
-            "name" => "Федя Лунеев",
-            "url" => "https://litnet.com/ru/mariya-luneva-u244464"
-        ]); //categories:books
+        $authors->each(function ($item) {
+            Authors::create($item);
+        });
     }
 }
