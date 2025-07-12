@@ -19,9 +19,9 @@ class ContentFactory extends Factory
     public function definition(): array
     {
         return [
-            'title' => $this->faker->title,
+            'title'       => $this->faker->title,
             'description' => $this->faker->text,
-            'url' => $this->faker->url,
+            'url'         => $this->faker->url,
             'category_id' => rand(1,5)
         ];
     }
